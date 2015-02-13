@@ -1,10 +1,9 @@
 ---
-title: 'Reproducible Research: Peer Assessment 1'
+title: "Reproducible Research: Peer Assessment 1"
 author: "Steeve Brechmann"
+date: '2015-02-13'
 output: html_document
-keep_md: true
 ---
-
 
 ##Introduction
 
@@ -125,7 +124,7 @@ For this part of the assignment, you can ignore the missing values in the datase
 
 ```{r}
 # Compute the total number of steps each day (NA values removed)
-sum_data <- aggregate(activity$steps, by=list(activity$date), sum, na.rm=TRUE)
+sum_data <- aggregate(activity$steps, by=list(activity$date), FUN=sum, na.rm=TRUE)
 
 # Rename the attributes
 names(sum_data) <- c("date", "total")
@@ -142,9 +141,10 @@ The histogram is given by the following lines of code:
 ```{r figure1}
 # Compute the histogram of the total number of steps each day
 hist(sum_data$total, 
+     breaks=seq(from=0, to=25000, by=2500),
      col="blue", 
      xlab="Total number of steps", 
-     ylim=c(0, 30), 
+     ylim=c(0, 20), 
      main="Histogram of the total number of steps taken each day\n(NA removed)")
 ```
 
@@ -158,8 +158,8 @@ mean(sum_data$total)
 median(sum_data$total)
 ```
 
-These formulas gives a mean and median of **`r mean(sum_data$total)`** and 
-**`r median(sum_data$total)`** respectively.
+These formulas gives a mean and median of **`r as.integer(mean(sum_data$total))`** and 
+**`r as.integer(median(sum_data$total))`** respectively.
 
 ###What is the average daily activity pattern?
 
@@ -173,7 +173,7 @@ rm(sum_data)
 # Compute the means of steps accross all days for each interval
 mean_data <- aggregate(activity$steps, 
                        by=list(activity$interval), 
-                       mean, 
+                       FUN=mean, 
                        na.rm=TRUE)
 
 # Rename the attributes
@@ -195,7 +195,7 @@ plot(mean_data$interval,
      type="l", 
      col="blue", 
      lwd=2, 
-     xlab="Interval [seconds]", 
+     xlab="Interval [minutes]", 
      ylab="Average number of steps", 
      main="Time-series of the average number of steps per intervals\n(NA removed)")
 ```
@@ -224,7 +224,7 @@ Note that there are a number of days/intervals where there are missing values
 or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total
-number of rows with `NA`s)
+number of rows with `NA`'s)
 
 ```{r}
 # Clear the workspace
@@ -234,7 +234,7 @@ rm(max_interval)
 NA_count <- sum(is.na(activity$steps))
 ```
 
-The number of `NA`s is **`r NA_count`**.
+The number of `NA`'s is **`r NA_count`**.
 
 2. Devise a strategy for filling in all of the missing values in the dataset. 
 The strategy does not need to be sophisticated. For example, you could use the 
@@ -251,7 +251,7 @@ na_pos <- which(is.na(activity$steps))
 mean_vec <- rep(mean(activity$steps, na.rm=TRUE), times=length(na_pos))
 ```
 
-We use the strategy to remplace each `NA` value by the mean of the **steps**.
+We use the strategy to remplace each `NA` value by the mean of the **steps** attribute.
 
 3. Create a new dataset that is equal to the original dataset but with the 
 missing data filled in.
@@ -278,13 +278,14 @@ number of steps?
 
 ```{r figure3}
 # Compute the total number of steps each day (NA values removed)
-sum_data <- aggregate(activity$steps, by=list(activity$date), sum)
+sum_data <- aggregate(activity$steps, by=list(activity$date), FUN=sum)
 
 # Rename the attributes
 names(sum_data) <- c("date", "total")
 
 # Compute the histogram of the total number of steps each day
 hist(sum_data$total, 
+     breaks=seq(from=0, to=25000, by=2500),
      col="blue", 
      xlab="Total number of steps", 
      ylim=c(0, 30), 
@@ -298,8 +299,8 @@ mean(sum_data$total)
 median(sum_data$total)
 ```
 
-These formulas gives a mean and median of **`r mean(sum_data$total)`** and 
-**`r median(sum_data$total)`** respectively.
+These formulas gives a mean and median of **`r as.integer(mean(sum_data$total))`** and 
+**`r as.integer(median(sum_data$total))`** respectively.
 
 These values differ greatly from the estimates from the first part of the 
 assignment. The impact of imputing the missing values is to have more data, hence

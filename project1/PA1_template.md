@@ -1,10 +1,9 @@
 ---
-title: 'Reproducible Research: Peer Assessment 1'
+title: "Reproducible Research: Peer Assessment 1"
 author: "Steeve Brechmann"
+date: '2015-02-13'
 output: html_document
-keep_md: true
 ---
-
 
 ##Introduction
 
@@ -139,7 +138,7 @@ For this part of the assignment, you can ignore the missing values in the datase
 
 ```r
 # Compute the total number of steps each day (NA values removed)
-sum_data <- aggregate(activity$steps, by=list(activity$date), sum, na.rm=TRUE)
+sum_data <- aggregate(activity$steps, by=list(activity$date), FUN=sum, na.rm=TRUE)
 
 # Rename the attributes
 names(sum_data) <- c("date", "total")
@@ -168,13 +167,14 @@ The histogram is given by the following lines of code:
 ```r
 # Compute the histogram of the total number of steps each day
 hist(sum_data$total, 
+     breaks=seq(from=0, to=25000, by=2500),
      col="blue", 
      xlab="Total number of steps", 
-     ylim=c(0, 30), 
+     ylim=c(0, 20), 
      main="Histogram of the total number of steps taken each day\n(NA removed)")
 ```
 
-![plot of chunk figure1](figure/figure1.png) 
+![plot of chunk figure1](figure/figure1-1.png) 
 
 2. Calculate and report the **mean** and **median** total number of steps taken 
 per day
@@ -187,7 +187,7 @@ mean(sum_data$total)
 median(sum_data$total)
 ```
 
-These formulas gives a mean and median of **9354.2295** and 
+These formulas gives a mean and median of **9354** and 
 **10395** respectively.
 
 ###What is the average daily activity pattern?
@@ -203,7 +203,7 @@ rm(sum_data)
 # Compute the means of steps accross all days for each interval
 mean_data <- aggregate(activity$steps, 
                        by=list(activity$interval), 
-                       mean, 
+                       FUN=mean, 
                        na.rm=TRUE)
 
 # Rename the attributes
@@ -218,13 +218,13 @@ head(mean_data)
 ```
 
 ```
-##   interval    mean
-## 1        0 1.71698
-## 2        5 0.33962
-## 3       10 0.13208
-## 4       15 0.15094
-## 5       20 0.07547
-## 6       25 2.09434
+##   interval      mean
+## 1        0 1.7169811
+## 2        5 0.3396226
+## 3       10 0.1320755
+## 4       15 0.1509434
+## 5       20 0.0754717
+## 6       25 2.0943396
 ```
 
 The time serie plot is created by the following lines of code
@@ -237,12 +237,12 @@ plot(mean_data$interval,
      type="l", 
      col="blue", 
      lwd=2, 
-     xlab="Interval [seconds]", 
+     xlab="Interval [minutes]", 
      ylab="Average number of steps", 
      main="Time-series of the average number of steps per intervals\n(NA removed)")
 ```
 
-![plot of chunk figure2](figure/figure2.png) 
+![plot of chunk figure2](figure/figure2-1.png) 
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains 
 the maximum number of steps?
@@ -269,7 +269,7 @@ Note that there are a number of days/intervals where there are missing values
 or summaries of the data.
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total
-number of rows with `NA`s)
+number of rows with `NA`'s)
 
 
 ```r
@@ -280,7 +280,7 @@ rm(max_interval)
 NA_count <- sum(is.na(activity$steps))
 ```
 
-The number of `NA`s is **2304**.
+The number of `NA`'s is **2304**.
 
 2. Devise a strategy for filling in all of the missing values in the dataset. 
 The strategy does not need to be sophisticated. For example, you could use the 
@@ -298,7 +298,7 @@ na_pos <- which(is.na(activity$steps))
 mean_vec <- rep(mean(activity$steps, na.rm=TRUE), times=length(na_pos))
 ```
 
-We use the strategy to remplace each `NA` value by the mean of the **steps**.
+We use the strategy to remplace each `NA` value by the mean of the **steps** attribute.
 
 3. Create a new dataset that is equal to the original dataset but with the 
 missing data filled in.
@@ -320,13 +320,13 @@ head(activity)
 ```
 
 ```
-##         date weekday daytype interval steps
-## 1 2012-10-01  monday weekday        0 37.38
-## 2 2012-10-01  monday weekday        5 37.38
-## 3 2012-10-01  monday weekday       10 37.38
-## 4 2012-10-01  monday weekday       15 37.38
-## 5 2012-10-01  monday weekday       20 37.38
-## 6 2012-10-01  monday weekday       25 37.38
+##         date weekday daytype interval   steps
+## 1 2012-10-01  monday weekday        0 37.3826
+## 2 2012-10-01  monday weekday        5 37.3826
+## 3 2012-10-01  monday weekday       10 37.3826
+## 4 2012-10-01  monday weekday       15 37.3826
+## 5 2012-10-01  monday weekday       20 37.3826
+## 6 2012-10-01  monday weekday       25 37.3826
 ```
 
 4. Make a histogram of the total number of steps taken each day and calculate 
@@ -338,20 +338,21 @@ number of steps?
 
 ```r
 # Compute the total number of steps each day (NA values removed)
-sum_data <- aggregate(activity$steps, by=list(activity$date), sum)
+sum_data <- aggregate(activity$steps, by=list(activity$date), FUN=sum)
 
 # Rename the attributes
 names(sum_data) <- c("date", "total")
 
 # Compute the histogram of the total number of steps each day
 hist(sum_data$total, 
+     breaks=seq(from=0, to=25000, by=2500),
      col="blue", 
      xlab="Total number of steps", 
      ylim=c(0, 30), 
      main="Histogram of the total number of steps taken each day\n(NA replaced by mean value)")
 ```
 
-![plot of chunk figure3](figure/figure3.png) 
+![plot of chunk figure3](figure/figure3-1.png) 
 
 The mean and median are computed like
 
@@ -361,8 +362,8 @@ mean(sum_data$total)
 median(sum_data$total)
 ```
 
-These formulas gives a mean and median of **1.0766 &times; 10<sup>4</sup>** and 
-**1.0766 &times; 10<sup>4</sup>** respectively.
+These formulas gives a mean and median of **10766** and 
+**10766** respectively.
 
 These values differ greatly from the estimates from the first part of the 
 assignment. The impact of imputing the missing values is to have more data, hence
@@ -383,13 +384,13 @@ head(activity)
 ```
 
 ```
-##         date weekday daytype interval steps
-## 1 2012-10-01  monday weekday        0 37.38
-## 2 2012-10-01  monday weekday        5 37.38
-## 3 2012-10-01  monday weekday       10 37.38
-## 4 2012-10-01  monday weekday       15 37.38
-## 5 2012-10-01  monday weekday       20 37.38
-## 6 2012-10-01  monday weekday       25 37.38
+##         date weekday daytype interval   steps
+## 1 2012-10-01  monday weekday        0 37.3826
+## 2 2012-10-01  monday weekday        5 37.3826
+## 3 2012-10-01  monday weekday       10 37.3826
+## 4 2012-10-01  monday weekday       15 37.3826
+## 5 2012-10-01  monday weekday       20 37.3826
+## 6 2012-10-01  monday weekday       25 37.3826
 ```
 
 2. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-
@@ -421,13 +422,13 @@ head(mean_data)
 ```
 
 ```
-##   daytype  weekday interval  mean
-## 1 weekday   friday        0 8.307
-## 2 weekday   monday        0 9.418
-## 3 weekend saturday        0 4.673
-## 4 weekend   sunday        0 4.673
-## 5 weekday thursday        0 9.376
-## 6 weekday  tuesday        0 0.000
+##   daytype  weekday interval     mean
+## 1 weekday   friday        0 8.307244
+## 2 weekday   monday        0 9.418355
+## 3 weekend saturday        0 4.672825
+## 4 weekend   sunday        0 4.672825
+## 5 weekday thursday        0 9.375844
+## 6 weekday  tuesday        0 0.000000
 ```
 
 The time series plot take the following form:
@@ -443,7 +444,7 @@ xyplot(mean ~ interval | daytype, mean_data,
        layout=c(1,2))
 ```
 
-![plot of chunk figure4](figure/figure4.png) 
+![plot of chunk figure4](figure/figure4-1.png) 
 
 ```r
 # Clear the workspace
